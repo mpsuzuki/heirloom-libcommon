@@ -20,3 +20,32 @@ libcommon_a_SOURCES = \
 	getopt.c pfmt.c vpfmt.c \
 	setlabel.c setuxlabel.c pfmt_label.c \
 	sysv3.c
+
+nodist_libcommon_a_SOURCES =
+BUILT_SOURCES = alloca.h malloc.h utmpx.h
+MOSTLYCLEANFILES = $(BUILT_SOURCES)
+
+if NEED_ALLOCA_H
+nodist_libcommon_a_SOURCES += alloca.h
+getopt.$(OBJEXT): getopt.c alloca.h
+endif
+
+if NEED_MALLOC_H
+nodist_libcommon_a_SOURCES += malloc.h
+ib_alloc.$(OBJEXT): ib_alloc.c malloc.h
+oblok.$(OBJEXT): oblok.c malloc.h
+endif
+
+if NEED_UTMPX_H
+nodist_libcommon_a_SOURCES += utmpx.h
+utmpx.$(OBJEXT): utmpx.c utmpx.h
+endif
+
+alloca.h: _alloca.h
+	$(LN_S) $^ $(builddir)/$(notdir $@)
+
+malloc.h: _malloc.h
+	$(LN_S) $^ $(builddir)/$(notdir $@)
+
+utmpx.h: _utmpx.h
+	$(LN_S) $^ $(builddir)/$(notdir $@)

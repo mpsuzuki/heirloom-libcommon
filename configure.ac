@@ -9,6 +9,7 @@ AC_PREFIX_DEFAULT(["/usr/ccs"])
 AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
+AC_PROG_LN_S
 
 AC_MSG_CHECKING([whether libc includes lseek64()])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([],[
@@ -86,24 +87,9 @@ AC_CHECK_DECL([__APPLE__],[
     ac_need_alloca_h=1
   ])
 ])
-
-if test ${ac_need_alloca_h} -gt 0
-then
-  AC_MSG_NOTICE([make symlink for alloca.h])
-  ln -s $(srcdir)/_alloca.h $(builddir)/alloca.h
-fi
-
-if test ${ac_need_malloc_h} -gt 0
-then
-  AC_MSG_NOTICE([make symlink for malloc.h])
-  ln -s $(srcdir)/_malloc.h $(builddir)/malloc.h
-fi
-
-if test ${ac_need_utmpx_h} -gt 0
-then
-  AC_MSG_NOTICE([make symlink for utmpx.h])
-  ln -s $(srcdir)/_utmpx.h $(builddir)/utmpx.h
-fi
+AM_CONDITIONAL(NEED_ALLOCA_H, test ${ac_need_alloca_h} -gt 0)
+AM_CONDITIONAL(NEED_MALLOC_H, test ${ac_need_malloc_h} -gt 0)
+AM_CONDITIONAL(NEED_UTMPX_H,  test ${ac_need_utmpx_h}  -gt 0)
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([GNUmakefile])
