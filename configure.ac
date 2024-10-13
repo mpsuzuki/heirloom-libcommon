@@ -1,5 +1,5 @@
 AC_PREREQ([2.62])
-AC_INIT([heirloom-libcommon], [0.0.20240915], [https://gitlab.com/mpsuzuki/heirloom-libcommon/-/issues])
+AC_INIT([heirloom-libcommon], [0.0.20240915], [https://github.com/mpsuzuki/heirloom-libcommon/-/issues])
 AM_INIT_AUTOMAKE([foreign])
 
 # Set default prefix
