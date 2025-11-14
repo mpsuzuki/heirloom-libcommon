@@ -92,5 +92,5 @@ AM_CONDITIONAL(NEED_MALLOC_H, test ${ac_need_malloc_h} -gt 0)
 AM_CONDITIONAL(NEED_UTMPX_H,  test ${ac_need_utmpx_h}  -gt 0)
 
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([GNUmakefile])
+AC_CONFIG_FILES([GNUmakefile include/GNUmakefile])
 AC_OUTPUT
