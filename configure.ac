@@ -19,9 +19,10 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([],[
   }
 ])],[
   AC_MSG_RESULT([yes])
-  orig_CFLAGS="${CFLAGS}"
-  CFLAGS="${CFLAGS} -D_FILE_OFFSET_BITS=64L"
+
   AC_MSG_CHECKING([whether -D_FILE_OFFSET_BITS=64 hides lseek64()])
+  orig_CPPFLAGS="${CPPFLAGS}"
+  CPPFLAGS="${CFLAGS} -D_FILE_OFFSET_BITS=64L"
   AC_COMPILE_IFELSE(
     [AC_LANG_PROGRAM([#include <unistd.h>],[
 int main (void)
@@ -34,15 +35,15 @@ int main (void)
     ])],[
       AC_MSG_RESULT([no])
     ],[
-      AM_CFLAGS="-D_FILE_OFFSET_BITS=64"
       AC_MSG_RESULT([yes])
+      HIDE_LSEEK64_CPPFLAGS="-D_FILE_OFFSET_BITS=64"
     ]
   )
-  CFLAGS="${orig_CFLAGS}"
+  CPPFLAGS="${orig_CPPFLAGS}"
 ],[
   AC_MSG_RESULT([no])
 ])
-AC_SUBST([AM_CFLAGS])
+AC_SUBST([HIDE_LSEEK64_CPPFLAGS])
 
 ac_need_alloca_h=0
 ac_need_malloc_h=0

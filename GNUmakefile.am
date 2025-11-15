@@ -1,5 +1,6 @@
 SUBDIRS = include
-AM_CPPFLAGS = -I$(builddir)/include
+AM_CPPFLAGS = -I$(builddir)/include \
+	@HIDE_LSEEK64_CPPFLAGS@
 
 EXTRA_DIST = \
 	autogen.sh \
