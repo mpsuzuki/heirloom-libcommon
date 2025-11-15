@@ -1,0 +1,16 @@
+#ifndef _WRAP_LIBCOMMON_SIGSET_H
+# define _WRAP_LIBCOMMON_SIGSET_H
+
+# define LIBCOMMON_SIGSET @LIBCOMMON_SIGSET@
+# define LIBCOMMON__XOPEN_SOURCE @LIBCOMMON__XOPEN_SOURCE@
+
+# if defined( LIBCOMMON_SIGSET ) && LIBCOMMON_SIGSET > 0
+#  include "sigset.h"
+
+# elif defined( LIBCOMMON__XOPEN_SOURCE ) && LIBCOMMON__XOPEN_SOURCE > 0
+#  define _XOPEN_SOURCE LIBCOMMON__XOPEN_SOURCE
+#  include <signal.h>
+
+# endif
+
+#endif /* _WRAP_LIBCOMMON_SIGSET_H */
