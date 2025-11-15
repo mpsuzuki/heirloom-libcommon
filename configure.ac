@@ -45,6 +45,50 @@ int main (void)
 ])
 AC_SUBST([HIDE_LSEEK64_CPPFLAGS])
 
+
+# Enable/disable libcommon sigset emulations
+AC_CHECK_HEADER([signal.h],[],[AC_MSG_ERROR([signal.h is required])])
+AC_ARG_WITH([native-sigset],[
+AS_HELP_STRING([--with-native-sigset=@<:@yes|no|auto@:>@],
+               [use native deprecated sigset() (default is no, auto is 'use if available')])
+],[native_sigset="$withval"],[native_sigset=no]
+)
+libcommon__xopen_source=0
+if test "x${native_sigset}" != xno
+then
+  HEIRLOOM_CPPFLAG_FOR_NATIVE_SIGSET([ENABLE_SIGSET_CPPFLAGS],[
+    ac_cv_have_decl_sigset=yes
+    ac_cv_have_sigset_family=yes
+    libcommon__xopen_source="${ac__xopen_source_enable_sigset}"
+  ],[
+    ac_cv_have_decl_sigset=no
+    ac_cv_have_sigset_family=no
+  ])
+fi
+AC_SUBST([LIBCOMMON__XOPEN_SOURCE],["${libcommon__xopen_source}"])
+
+need_libcommon_sigset=no
+libcommon_sigset=0
+if test "x${native_sigset}" = xyes
+then
+  if test "x${ac_cv_have_sigset_family}" != xyes
+  then
+    AC_MSG_ERROR([native sigset() etc are requested, but some are missing])
+  fi
+elif test "x${native_sigset}" = xno -o "x${ac_cv_have_sigset_family}" != xyes
+then
+  need_libcommon_sigset=yes
+  libcommon_sigset=1
+  AC_CHECK_FUNCS([sigemptyset sigaddset sigprocmask sigaction sigismember],[],[
+    AC_MSG_ERROR([needed for libcommon sigset()])
+  ])
+  ENABLE_SIGSET_CPPFLAGS="-DLIBCOMMON_SIGSET"
+fi
+AC_SUBST([LIBCOMMON_SIGSET],["${libcommon_sigset}"])
+AC_SUBST([ENABLE_SIGSET_CPPFLAGS])
+AM_CONDITIONAL(NEED_LIBCOMMON_SIGSET, test "x${need_libcommon_sigset}" = xyes)
+
+
 ac_need_alloca_h=0
 ac_need_malloc_h=0
 ac_need_utmpx_h=0
@@ -93,5 +137,5 @@ AM_CONDITIONAL(NEED_MALLOC_H, test ${ac_need_malloc_h} -gt 0)
 AM_CONDITIONAL(NEED_UTMPX_H,  test ${ac_need_utmpx_h}  -gt 0)
 
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([GNUmakefile include/GNUmakefile])
+AC_CONFIG_FILES([GNUmakefile wrap-sigset.h include/GNUmakefile])
 AC_OUTPUT
