@@ -22,7 +22,8 @@
 /*	Sccsid @(#)sigpause.c	1.6 (gritter) 1/22/06	*/
 
 #if defined (__FreeBSD__) || defined (__dietlibc__) || defined (__NetBSD__) || \
-	defined (__OpenBSD__) || defined (__DragonFly__) || defined (__APPLE__)
+	defined (__OpenBSD__) || defined (__DragonFly__) || defined (__APPLE__) || \
+	defined (LIBCOMMON_SIGSET)
 #include <signal.h>
 #include "sigset.h"
 
@@ -45,4 +46,4 @@ sigpause(int sig)
 	return ret;
 }
 #endif	/* __FreeBSD__ || __dietlibc__ || __NetBSD__ || __OpenBSD__ ||
-	__DragonFly__ || __APPLE__ */
+	__DragonFly__ || __APPLE__ || LIBCOMMON_SIGSET */
