@@ -71,7 +71,7 @@ AS_HELP_STRING([--with-libcommon=prefix-to-builddir-libcommon],
   [libcommon_prefix=${withval}],
   [libcommon_prefix=../heirloom-libcommon])
 
-AC_MSG_CHECKING([libcommon.a])
+AC_MSG_CHECKING([for libcommon.a])
 if test "${use_included_libcommon}" = yes
 then
   AC_MSG_RESULT([build from included source])
@@ -86,27 +86,8 @@ then
   libcommon_lib="${libcommon_prefix}"/lib
 fi
 
-if test x"${libcommon_lib}" != x
-then
-  orig_LIBS="${LIBS}"
-  LIBS="-L${libcommon_lib} -lcommon"
-  AC_CHECK_FUNC([ib_alloc],[],[libcommon_lib=""])
-  LIBS="${orig_LIBS}"
-fi
 
-if test x"${libcommon_lib}" = x
-then
-  AC_MSG_RESULT([not found, use included copy of heirloom-libcommon])
-  use_included_libcommon=yes
-  libcommon_prefix="${srcdir}"/heirloom-libcommon/
-  libcommon_include='$(libcommon_prefix)'
-  libcommon_lib='$(libcommon_prefix)'
-fi
-
-
-
-
-AC_MSG_CHECKING([regexp.h])
+AC_MSG_CHECKING([for regexp.h])
 if test "${use_included_libcommon}" = yes
 then
   AC_MSG_RESULT([build from included source])
@@ -122,9 +103,78 @@ else
   AC_MSG_ERROR([not found])
 fi
 
+
+if test x"${libcommon_lib}" != x
+then
+  AC_PATH_PROG([NM], [nm], [no])
+  AC_MSG_CHECKING([whether ${libcommon_lib}/libcommon.a has ib_alloc()])
+  nm_g_ib_alloc=`"${NM}" -g "${libcommon_lib}/libcommon.a" | sed -n "/\.o/d;/ib_alloc/p"`
+  if test -z "${nm_g_ib_alloc}"
+  then
+    AC_MSG_RESULT([no])
+    libcommon_lib=""
+  else
+    AC_MSG_RESULT([yes])
+    AC_MSG_CHECKING([for wrap-sigset.h])
+    if test -r ${libcommon_prefix}/include/wrap-sigset.h
+    then
+      AC_MSG_RESULT([${libcommon_prefix}/include/wrap-sigset.h])
+      have_wrap_sigset_h=1
+    elif test -r ${libcommon_prefix}/wrap-sigset.h
+    then
+      AC_MSG_RESULT([${libcommon_prefix}/wrap-sigset.h])
+      have_wrap_sigset_h=1
+    else
+      AC_MSG_RESULT([not found])
+      have_wrap_sigset_h=
+
+      AC_MSG_CHECKING([whether ${libcommon_lib}/libcommon.a has sigset()])
+      nm_g_sigset=`"${NM}" -g "${libcommon_lib}/libcommon.a" | sed -n "/\.o/d;/sigset/p"`
+      if test -z "${nm_g_sigset}"
+      then
+        AC_MSG_RESULT([no])
+        have_libcommon_sigset=
+      else
+        AC_MSG_RESULT([yes])
+        have_libcommon_sigset=1
+        AC_MSG_CHECKING([for sigset.h])
+        if test -r ${libcommon_prefix}/include/sigset.h
+        then
+          AC_MSG_RESULT([${libcommon_prefix}/include/sigset.h])
+          have_libcommon_sigset=1
+        elif test -r ${libcommon_prefix}/sigset.h
+        then
+          AC_MSG_RESULT([${libcommon_prefix}/sigset.h])
+          have_libcommon_sigset=1
+        else
+          AC_MSG_RESULT([no, libcommon.a has sigset() but sigset.h is missing])
+          libcommon_lib=""
+        fi # end of testing "sigset.h"
+      fi # end of "nm -g libcommon.a | grep sigset"
+    fi # end of testing "wrap-sigset.h"
+  fi # end of "nm -g libcommon.a | grep ib_alloc
+fi # end of libcommon_lib
+
+
+if test x"${libcommon_lib}" = x
+then
+  AC_MSG_RESULT([not found or broken, use included copy of heirloom-libcommon])
+  use_included_libcommon=yes
+  libcommon_prefix="${srcdir}"/heirloom-libcommon/
+  libcommon_include='$(libcommon_prefix)'
+  libcommon_lib='$(libcommon_prefix)'
+fi
+
+
+
+
 AM_CONDITIONAL(BUILD_LIBCOMMON, test "${use_included_libcommon}" = yes)
 AC_SUBST([libcommon_prefix])
 AC_SUBST([libcommon_include])
 AC_SUBST([libcommon_lib])
+AC_DEFINE_UNQUOTED([HAVE_WRAP_SIGSET_H],[${have_wrap_sigset_h}],
+                   [wrap-sigset.h for libcommon sigset.h])
+AC_DEFINE_UNQUOTED([HAVE_LIBCOMMON_SIGSET],[${have_libcommon_sigset}],
+                   [libcommon.a has its own sigset()])
 
 ])
