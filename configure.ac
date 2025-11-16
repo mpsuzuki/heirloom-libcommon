@@ -127,7 +127,7 @@ AC_CHECK_DECL([__APPLE__],[
 #if defined(__MAC_OS_X_VERSION_10_5) && (__MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_OS_X_VERSION_10_5)
 #error __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_OS_X_VERSION_10_5
 #endif
-    ])],
+    ]),
   ],[
     ac_need_alloca_h=1
   ])
