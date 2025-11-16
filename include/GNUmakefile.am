@@ -1,17 +1,20 @@
-BUILT_SOURCES = alloca.h malloc.h utmpx.h
+BUILT_SOURCES =
+
+if NEED_ALLOCA_H
+BUILT_SOURCES += alloca.h
+endif
+
+if NEED_MALLOC_H
+BUILT_SOURCES += malloc.h
+endif
+
+if NEED_UTMPX_H
+BUILT_SOURCES += utmpx.h
+endif
+
 MOSTLYCLEANFILES = $(BUILT_SOURCES)
 
-# if NEED_ALLOCA_H
-# nodist_libcommon_a_SOURCES += alloca.h
-# endif
-# 
-# if NEED_MALLOC_H
-# nodist_libcommon_a_SOURCES += malloc.h
-# endif
-# 
-# if NEED_UTMPX_H
-# nodist_libcommon_a_SOURCES += utmpx.h
-# endif
+all: $(BUILT_SOURCES)
 
 alloca.h: $(top_srcdir)/_alloca.h
 	$(LN_S) $^ $(builddir)/$(notdir $@)
