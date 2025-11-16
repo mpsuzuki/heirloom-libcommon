@@ -229,11 +229,11 @@ AC_MSG_CHECKING([for libcommon in ${libcommon_prefix}])
     ],[have_wrap_sigset_h])
   ],[have_wrap_sigset_h])
 
-have_libcommon_sigset=0
-if test "x${has_wrap_sigset_h}" != xyes -a -n "${path_libcommon_a}"
+have_libcommon_sigset=no
+if test "x${have_wrap_sigset_h}" != xyes -a -n "${path_libcommon_a}"
 then
   HEIRLOOM_FIND_LIBCOMMON_SIGSET_EMULATION(["${path_libcommon_a}"],[
-    have_libcommon_sigset=1
+    have_libcommon_sigset=yes
   ],[
     HEIRLOOM_CPPFLAG_FOR_NATIVE_SIGSET([ac_enable_sigset_cppflag],
       [],
@@ -256,8 +256,8 @@ then
       libcommon_prefix='$(top_srcdir)/heirloom-libcommon'
       libcommon_include='$(top_srcdir)/heirloom-libcommon'
       libcommon_lib='$(top_builddir)/heirloom-libcommon'
-      have_wrap_sigset_h=1
-      have_libcommon_sigset=1 # emulation is enabled by default
+      have_wrap_sigset_h=yes
+      have_libcommon_sigset=yes # emulation is enabled by default
     ],[
       AC_MSG_ERROR(included source is broken)
     ])
