@@ -122,15 +122,7 @@ AC_CHECK_DECL([__UCLIBC__],[
 AC_CHECK_DECL([__APPLE__],[
   ac_need_malloc_h=1
   ac_need_utmpx_h=1
-  AC_PREPROC_IFELSE([
-    AC_LANG_PROGRAM([],[
-#if defined(__MAC_OS_X_VERSION_10_5) && (__MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_OS_X_VERSION_10_5)
-#error __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_OS_X_VERSION_10_5
-#endif
-    ]),
-  ],[
-    ac_need_alloca_h=1
-  ])
+  AC_CHECK_HEADER([alloca.h],[],[ac_need_alloca_h=1])
 ])
 AM_CONDITIONAL(NEED_ALLOCA_H, test ${ac_need_alloca_h} -gt 0)
 AM_CONDITIONAL(NEED_MALLOC_H, test ${ac_need_malloc_h} -gt 0)
