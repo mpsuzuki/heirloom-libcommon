@@ -56,9 +56,11 @@ AC_DEFUN([HEIRLOOM_CPPFLAG_FOR_NATIVE_SIGSET],[
   fi
   if test "x${ac_cv_have_sigset_family}" = xyes
   then
-    [$2]
+    :
+    $2
   else
-    [$3]
+    :
+    $3
   fi
 ])
 
