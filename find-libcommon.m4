@@ -167,22 +167,22 @@ AC_DEFUN([HEIRLOOM_FIND_LIBCOMMON_SIGSET_EMULATION],[
   if test -z "${ac_nm_g_ib_alloc}"
   then
     AC_MSG_RESULT([no])
-    ac_libcommon_has_ib_alloc=no
+    ac_libcommon_have_ib_alloc=no
   else
     AC_MSG_RESULT([yes])
-    ac_libcommon_has_ib_alloc=yes
+    ac_libcommon_have_ib_alloc=yes
   fi
   AC_MSG_CHECKING([whether ${basename_libcommon_a} has sigset()])
   ac_nm_g_sigset=`"${NM}" -g "$1"|awk '{isT=0;isFUNC=0;for(i=1;i<=NF;i++){if($i=="T"){isT=1}else if($i=="sigset"){isFUNC=1}};if(isT > 0 && isFUNC>0){print}}'`
   if test -z "${ac_nm_g_sigset}"
   then
     AC_MSG_RESULT([no])
-    ac_libcommon_has_sigset=no
+    ac_libcommon_have_sigset=no
   else
     AC_MSG_RESULT([yes])
-    ac_libcommon_has_sigset=yes
+    ac_libcommon_have_sigset=yes
   fi
-  if test -n "${ac_libcommon_has_ib_alloc}" -a -n "${ac_libcommon_has_sigset}"
+  if test -n "${ac_libcommon_have_ib_alloc}" -a -n "${ac_libcommon_have_sigset}"
   then
     :
     $2
@@ -226,8 +226,8 @@ AC_MSG_CHECKING([for libcommon in ${libcommon_prefix}])
       AC_MSG_RESULT([no, build from included source])
       build_included_libcommon=yes
       path_libcommon_a=
-    ],[has_wrap_sigset_h])
-  ],[has_wrap_sigset_h])
+    ],[have_wrap_sigset_h])
+  ],[have_wrap_sigset_h])
 
 have_libcommon_sigset=0
 if test "x${has_wrap_sigset_h}" != xyes -a -n "${path_libcommon_a}"
