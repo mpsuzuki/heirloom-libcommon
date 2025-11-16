@@ -201,106 +201,68 @@ AC_ARG_WITH([libcommon],
 AS_HELP_STRING([--with-libcommon=prefix-to-builddir-libcommon],
   [path to the builddir of libcommon]),
   [libcommon_prefix=${withval}],
-  [libcommon_prefix=../heirloom-libcommon])
+  [libcommon_prefix=../heirloom-libcommon]
+)
+AC_ARG_WITH([included-libcommon],
+AS_HELP_STRING([--with-included-libcommon],
+  [build included libcommon]),
+  [build_included_libcommon=yes],
+  [build_included_libcommon=no])
 
-AC_MSG_CHECKING([for libcommon.a])
-if test "${use_included_libcommon}" = yes
+AC_MSG_CHECKING([for libcommon in ${libcommon_prefix}])
+  HEIRLOOM_FIND_LIBCOMMON_INSTALLED([${libcommon_prefix}],[
+    AC_MSG_RESULT([yes, installed in here])
+    libcommon_include='$(libcommon_prefix)/include'
+    libcommon_lib='$(libcommon_prefix)/lib'
+    path_libcommon_a="${libcommon_prefix}/lib/libcommon.a"
+  ],[
+    HEIRLOOM_FIND_LIBCOMMON_BUILT([${libcommon_prefix}],[],[
+      AC_MSG_RESULT([yes, built in here])
+      libcommon_include='$(libcommon_prefix)'
+      libcommon_lib='$(libcommon_prefix)'
+      path_libcommon_a="${libcommon_prefix}/libcommon.a"
+    ],[
+      AC_MSG_RESULT([no, build from included source])
+      build_included_libcommon=yes
+      path_libcommon_a=
+    ],[has_wrap_sigset_h])
+  ],[has_wrap_sigset_h])
+
+have_libcommon_sigset=0
+if test "x${has_wrap_sigset_h}" != xyes -a -n "${path_libcommon_a}"
 then
-  AC_MSG_RESULT([build from included source])
-  libcommon_lib="${libcommon_prefix}"
-elif test -r "${libcommon_prefix}"/libcommon.a
-then
-  AC_MSG_RESULT([${libcommon_prefix}/libcommon.a])
-  libcommon_lib="${libcommon_prefix}"
-elif test -r "${libcommon_prefix}"/lib/libcommon.a
-then
-  AC_MSG_RESULT([${libcommon_prefix}/lib/libcommon.a])
-  libcommon_lib="${libcommon_prefix}"/lib
+  HEIRLOOM_FIND_LIBCOMMON_SIGSET_EMULATION(["${path_libcommon_a}"],[
+    have_libcommon_sigset=1
+  ],[
+    HEIRLOOM_CPPFLAG_FOR_NATIVE_SIGSET([ac_enable_sigset_cppflag],
+      [],
+      [ AC_MSG_WARN([cannot enable native sigset(), build includes source])
+        build_included_libcommon=yes
+      ]
+    )
+  ])
 fi
 
-
-AC_MSG_CHECKING([for regexp.h])
-if test "${use_included_libcommon}" = yes
+if test "x${build_included_libcommon}" = xyes
 then
-  AC_MSG_RESULT([build from included source])
-elif test -r ${libcommon_prefix}/regexp.h
-then
-  AC_MSG_RESULT([${libcommon_prefix}/regexp.h])
-  libcommon_include='$(libcommon_prefix)'
-elif test -r ${libcommon_prefix}/include/regexp.h
-then
-  AC_MSG_RESULT([${libcommon_prefix}/include/regexp.h])
-  libcommon_include='$(libcommon_prefix)/include'
-else
-  AC_MSG_ERROR([not found])
-fi
-
-
-if test x"${libcommon_lib}" != x
-then
-  AC_PATH_PROG([NM], [nm], [no])
-  AC_MSG_CHECKING([whether ${libcommon_lib}/libcommon.a has ib_alloc()])
-  nm_g_ib_alloc=`"${NM}" -g "${libcommon_lib}/libcommon.a" | sed -n "/\.o/d;/ib_alloc/p"`
-  if test -z "${nm_g_ib_alloc}"
-  then
-    AC_MSG_RESULT([no])
-    libcommon_lib=""
-  else
-    AC_MSG_RESULT([yes])
-    AC_MSG_CHECKING([for wrap-sigset.h])
-    if test -r ${libcommon_prefix}/include/wrap-sigset.h
-    then
-      AC_MSG_RESULT([${libcommon_prefix}/include/wrap-sigset.h])
+  ac_srcdir_libcommon="${srcdir}/heirloom-libcommon"
+  AC_MSG_CHECKING([for libcommon in ${ac_srcdir_libcommon}])
+  HEIRLOOM_FIND_LIBCOMMON_SOURCE([${ac_srcdir_libcommon}],
+    [
+      AC_MSG_RESULT(yes)
+      # Currently, no support for the case the included
+      # source is old and without "wrap-sigset.h".
+      libcommon_prefix='$(top_srcdir)/heirloom-libcommon'
+      libcommon_include='$(top_srcdir)/heirloom-libcommon'
+      libcommon_lib='$(top_builddir)/heirloom-libcommon'
       have_wrap_sigset_h=1
-    elif test -r ${libcommon_prefix}/wrap-sigset.h
-    then
-      AC_MSG_RESULT([${libcommon_prefix}/wrap-sigset.h])
-      have_wrap_sigset_h=1
-    else
-      AC_MSG_RESULT([not found])
-      have_wrap_sigset_h=
-
-      AC_MSG_CHECKING([whether ${libcommon_lib}/libcommon.a has sigset()])
-      nm_g_sigset=`"${NM}" -g "${libcommon_lib}/libcommon.a" | sed -n "/\.o/d;/sigset/p"`
-      if test -z "${nm_g_sigset}"
-      then
-        AC_MSG_RESULT([no])
-        have_libcommon_sigset=
-      else
-        AC_MSG_RESULT([yes])
-        have_libcommon_sigset=1
-        AC_MSG_CHECKING([for sigset.h])
-        if test -r ${libcommon_prefix}/include/sigset.h
-        then
-          AC_MSG_RESULT([${libcommon_prefix}/include/sigset.h])
-          have_libcommon_sigset=1
-        elif test -r ${libcommon_prefix}/sigset.h
-        then
-          AC_MSG_RESULT([${libcommon_prefix}/sigset.h])
-          have_libcommon_sigset=1
-        else
-          AC_MSG_RESULT([no, libcommon.a has sigset() but sigset.h is missing])
-          libcommon_lib=""
-        fi # end of testing "sigset.h"
-      fi # end of "nm -g libcommon.a | grep sigset"
-    fi # end of testing "wrap-sigset.h"
-  fi # end of "nm -g libcommon.a | grep ib_alloc
-fi # end of libcommon_lib
-
-
-if test x"${libcommon_lib}" = x
-then
-  AC_MSG_RESULT([not found or broken, use included copy of heirloom-libcommon])
-  use_included_libcommon=yes
-  libcommon_prefix="${srcdir}"/heirloom-libcommon/
-  libcommon_include='$(libcommon_prefix)'
-  libcommon_lib='$(libcommon_prefix)'
+      have_libcommon_sigset=1 # emulation is enabled by default
+    ],[
+      AC_MSG_ERROR(included source is broken)
+    ])
 fi
 
-
-
-
-AM_CONDITIONAL(BUILD_LIBCOMMON, test "${use_included_libcommon}" = yes)
+AM_CONDITIONAL(BUILD_LIBCOMMON, test "${build_included_libcommon}" = yes)
 AC_SUBST([libcommon_prefix])
 AC_SUBST([libcommon_include])
 AC_SUBST([libcommon_lib])
