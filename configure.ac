@@ -130,4 +130,5 @@ AM_CONDITIONAL(NEED_UTMPX_H,  test ${ac_need_utmpx_h}  -gt 0)
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([GNUmakefile wrap-sigset.h include/GNUmakefile])
+AC_SUBST([builddir_include],[${builddir:=.}/include])
 AC_OUTPUT

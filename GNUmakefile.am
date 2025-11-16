@@ -1,4 +1,5 @@
 SUBDIRS = include
+VPATH = @builddir_include@:@builddir@:@srcdir@
 AM_CPPFLAGS = -I$(builddir)/include \
 	@HIDE_LSEEK64_CPPFLAGS@ \
 	@ENABLE_SIGSET_CPPFLAGS@
