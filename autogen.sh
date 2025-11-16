@@ -1,5 +1,5 @@
 #!/bin/sh
-aclocal -I.
+aclocal -I. --force
 autoheader
 automake -a
 autoconf
