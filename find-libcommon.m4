@@ -267,9 +267,12 @@ AM_CONDITIONAL(BUILD_LIBCOMMON, test "${build_included_libcommon}" = yes)
 AC_SUBST([libcommon_prefix])
 AC_SUBST([libcommon_include])
 AC_SUBST([libcommon_lib])
-AC_DEFINE_UNQUOTED([HAVE_WRAP_SIGSET_H],[${have_wrap_sigset_h}],
-                   [wrap-sigset.h for libcommon sigset.h])
-AC_DEFINE_UNQUOTED([HAVE_LIBCOMMON_SIGSET],[${have_libcommon_sigset}],
-                   [libcommon.a has its own sigset()])
-
+if test "x${have_wrap_sigset_h}" = xyes
+then
+  AC_DEFINE_UNQUOTED([HAVE_WRAP_SIGSET_H],[1],[wrap-sigset.h for libcommon sigset.h])
+fi
+if test "x${have_libcommon_sigset}" = xyes
+then
+  AC_DEFINE_UNQUOTED([HAVE_LIBCOMMON_SIGSET],[1],[libcommon.a has its own sigset()])
+fi
 ])
