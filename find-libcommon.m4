@@ -160,8 +160,9 @@ dnl $2 action if it has sigset() emulation
 dnl $3 action if it does not have sigset() emulation
 dnl
 AC_DEFUN([HEIRLOOM_FIND_LIBCOMMON_SIGSET_EMULATION],[
+  basename_libcommon_a=`basename $1`
   AC_PATH_PROG([NM], [nm], [no])
-  AC_MSG_CHECKING([whether $1 has ib_alloc()])
+  AC_MSG_CHECKING([whether ${basename_libcommon_a} has ib_alloc()])
   ac_nm_g_ib_alloc=`"${NM}" -g "$1"|awk '{isT=0;isFUNC=0;for(i=1;i<=NF;i++){if($i=="T"){isT=1}else if($i=="ib_alloc"){isFUNC=1}};if(isT > 0 && isFUNC>0){print}}'`
   if test -z "${ac_nm_g_ib_alloc}"
   then
@@ -171,7 +172,7 @@ AC_DEFUN([HEIRLOOM_FIND_LIBCOMMON_SIGSET_EMULATION],[
     AC_MSG_RESULT([yes])
     ac_libcommon_has_ib_alloc=yes
   fi
-  AC_MSG_CHECKING([whether $1 has sigset()])
+  AC_MSG_CHECKING([whether ${basename_libcommon_a} has sigset()])
   ac_nm_g_sigset=`"${NM}" -g "$1"|awk '{isT=0;isFUNC=0;for(i=1;i<=NF;i++){if($i=="T"){isT=1}else if($i=="sigset"){isFUNC=1}};if(isT > 0 && isFUNC>0){print}}'`
   if test -z "${ac_nm_g_sigset}"
   then
