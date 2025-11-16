@@ -64,6 +64,135 @@ AC_DEFUN([HEIRLOOM_CPPFLAG_FOR_NATIVE_SIGSET],[
   fi
 ])
 
+dnl Check the directory is installed libcommon
+dnl
+dnl $1 directory to be tested
+dnl $2 action if it is an installed directory
+dnl $3 action if it is not an installed directory
+dnl $4 variable name to store whether wrap-sigset.h is found or not
+dnl
+AC_DEFUN([HEIRLOOM_FIND_LIBCOMMON_INSTALLED],[
+  ac_found_regexp_h=no;      test -r "$1"/include/regexp.h      && ac_found_regexp_h=yes
+  ac_found_wrap_sigset_h=no; test -r "$1"/include/wrap-sigset.h && ac_found_wrap_sigset_h=yes
+  ac_found_libcommon_a=no;   test -r "$1"/lib/libcommon.a       && ac_found_libcommon_a=yes
+
+  if test -n "[$4]"
+  then
+    [$4]="${ac_found_wrap_sigset_h}"
+  fi
+
+  if test "x${ac_found_regexp_h}" = xyes -a "x${ac_found_libcommon_a}" = xyes
+  then
+    :
+    $2
+  else
+    :
+    $3
+  fi
+])
+
+dnl Check the directory is built(-but-not-installed) libcommon
+dnl
+dnl $1 built directory to be tested
+dnl $2 source directory (optional)
+dnl $3 action if it is an installed directory
+dnl $4 action if it is not an installed directory
+dnl $5 variable name to store whether wrap-sigset.h is found or not
+dnl
+AC_DEFUN([HEIRLOOM_FIND_LIBCOMMON_BUILT],[
+  ac_dir_built_libcommon=$1
+  ac_dir_src_libcommon=$2
+  if test -z "${ac_dir_source_libcommon}" 
+  then
+    ac_dir_src_libcommon="${ac_dir_built_libcommon}"
+  fi
+  ac_found_regexp_h=no;      test -r "${ac_dir_src_libcommon}"/regexp.h        && ac_found_regexp_h=yes
+  ac_found_wrap_sigset_h=no; test -r "${ac_dir_built_libcommon}"/wrap-sigset.h && ac_found_wrap_sigset_h=yes
+  ac_found_libcommon_a=no;   test -r "${ac_dir_built_libcommon}"/libcommon.a   && ac_found_libcommon_a=yes
+
+  if test -n "[$5]"
+  then
+    [$5]="${ac_found_wrap_sigset_h}"
+  fi
+
+  if test "x${ac_found_regexp_h}" = xyes -a "x${ac_found_libcommon_a}" = xyes
+  then
+    :
+    $3
+  else
+    :
+    $4
+  fi
+])
+
+dnl Check the directory is libcommon source
+dnl
+dnl $1 directory to be tested
+dnl $2 action if it is an installed directory
+dnl $3 action if it is not an installed directory
+dnl $4 variable name to store whether wrap-sigset.h.in is found or not
+dnl
+AC_DEFUN([HEIRLOOM_FIND_LIBCOMMON_SOURCE],[
+  ac_found_regexp_h=no;         test -r "$1"/regexp.h         && ac_found_regexp_h=yes
+  ac_found_wrap_sigset_h_in=no; test -r "$1"/wrap-sigset.h.in && ac_found_wrap_sigset_h_in=yes
+  ac_found_configure=no;        test -x "$1"/configure        && ac_found_configure=yes
+
+  if test -n "[$4]"
+  then
+    [$4]="${ac_found_wrap_sigset_h_in}"
+  fi
+
+  if test "x${ac_found_regexp_h}" = xyes -a "x${ac_found_configure}" = xyes
+  then
+    :
+    $2
+  else
+    :
+    $3
+  fi
+])
+
+
+dnl Check whether libcommon.a has sigset() emulation
+dnl
+dnl $1 libcommon.a pathname
+dnl $2 action if it has sigset() emulation
+dnl $3 action if it does not have sigset() emulation
+dnl
+AC_DEFUN([HEIRLOOM_FIND_LIBCOMMON_SIGSET_EMULATION],[
+  AC_PATH_PROG([NM], [nm], [no])
+  AC_MSG_CHECKING([whether $1 has ib_alloc()])
+  ac_nm_g_ib_alloc=`"${NM}" -g "$1"|sed -n "/\.o/d;/[0-9A-Za-z]ib_alloc/d;/ib_alloc[0-9A-Za-z]/d;/ib_alloc/pq"`
+  if test -z "${ac_nm_g_ib_alloc}"
+  then
+    AC_MSG_RESULT([no])
+    ac_libcommon_has_ib_alloc=no
+  else
+    AC_MSG_RESULT([yes])
+    ac_libcommon_has_ib_alloc=yes
+  fi
+  AC_MSG_CHECKING([whether $1 has sigset()])
+  ac_nm_g_sigset=`"${NM}" -g "$1"|sed -n "/\.o/d;/[0-9A-Za-z]sigset/d;/sigset[0-9A-Za-z]/d;/sigset/pq"`
+  if test -z "${ac_nm_g_sigset}"
+  then
+    AC_MSG_RESULT([no])
+    ac_libcommon_has_sigset=no
+  else
+    AC_MSG_RESULT([yes])
+    ac_libcommon_has_sigset=yes
+  fi
+  if test -n "${ac_libcommon_has_ib_alloc}" -a -n "${ac_libcommon_has_sigset}"
+  then
+    :
+    $2
+  else
+    :
+    $3
+  fi
+])
+
+
+
 # Search libcommon
 AC_DEFUN([HEIRLOOM_FIND_LIBCOMMON],[
 
