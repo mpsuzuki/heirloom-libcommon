@@ -162,7 +162,7 @@ dnl
 AC_DEFUN([HEIRLOOM_FIND_LIBCOMMON_SIGSET_EMULATION],[
   AC_PATH_PROG([NM], [nm], [no])
   AC_MSG_CHECKING([whether $1 has ib_alloc()])
-  ac_nm_g_ib_alloc=`"${NM}" -g "$1"|sed -n "/\.o/d;/[0-9A-Za-z]ib_alloc/d;/ib_alloc[0-9A-Za-z]/d;/ib_alloc/pq"`
+  ac_nm_g_ib_alloc=`"${NM}" -g "$1"|awk '{isT=0;isFUNC=0;for(i=1;i<=NF;i++){if($i=="T"){isT=1}else if($i=="ib_alloc"){isFUNC=1}};if(isT > 0 && isFUNC>0){print}}'`
   if test -z "${ac_nm_g_ib_alloc}"
   then
     AC_MSG_RESULT([no])
@@ -172,7 +172,7 @@ AC_DEFUN([HEIRLOOM_FIND_LIBCOMMON_SIGSET_EMULATION],[
     ac_libcommon_has_ib_alloc=yes
   fi
   AC_MSG_CHECKING([whether $1 has sigset()])
-  ac_nm_g_sigset=`"${NM}" -g "$1"|sed -n "/\.o/d;/[0-9A-Za-z]sigset/d;/sigset[0-9A-Za-z]/d;/sigset/pq"`
+  ac_nm_g_sigset=`"${NM}" -g "$1"|awk '{isT=0;isFUNC=0;for(i=1;i<=NF;i++){if($i=="T"){isT=1}else if($i=="sigset"){isFUNC=1}};if(isT > 0 && isFUNC>0){print}}'`
   if test -z "${ac_nm_g_sigset}"
   then
     AC_MSG_RESULT([no])
