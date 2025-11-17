@@ -253,9 +253,9 @@ then
       AC_MSG_RESULT(yes)
       # Currently, no support for the case the included
       # source is old and without "wrap-sigset.h".
-      libcommon_prefix='$(top_srcdir)/heirloom-libcommon'
-      libcommon_include='$(top_srcdir)/heirloom-libcommon'
-      libcommon_lib='$(top_builddir)/heirloom-libcommon'
+      libcommon_prefix='$(srcdir)/heirloom-libcommon'
+      libcommon_include='$(srcdir)/heirloom-libcommon'
+      libcommon_lib='$(builddir)/heirloom-libcommon'
       have_wrap_sigset_h=yes
       have_libcommon_sigset=yes # emulation is enabled by default
     ],[
