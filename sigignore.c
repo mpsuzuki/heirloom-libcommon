@@ -27,8 +27,15 @@
 #include <signal.h>
 #include "sigset.h"
 
+#undef sigignore
 int
 sigignore(int sig)
+{
+	return libcommon_sigignore(sig);
+}
+
+int
+libcommon_sigignore(int sig)
 {
 	struct sigaction	act;
 

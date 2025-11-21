@@ -29,11 +29,23 @@
 #define	SIG_HOLD	((void (*)(int))2)
 #endif	/* !SIG_HOLD */
 
-extern int	sighold(int);
-extern int	sigignore(int);
-extern int	sigpause(int);
-extern int	sigrelse(int);
-extern void	(*sigset(int, void (*)(int)))(int);
-extern void	(*signal(int, void (*)(int)))(int);
+extern int	libcommon_sighold(int);
+#define	sighold(i)	libcommon_sighold((i))
+
+extern int	libcommon_sigignore(int);
+#define	sigignore(i)	libcommon_sigignore((i))
+
+extern int	libcommon_sigpause(int);
+#define	sigpause(i)	libcommon_sigpause((i))
+
+extern int	libcommon_sigrelse(int);
+#define	sigrelease(i)	libcommon_sigrelse((i))
+
+extern void	(*libcommon_sigset(int, void (*)(int)))(int);
+#define	sigset(i, i_p)	libcommon_sigset((i), (i_p))
+
+extern void	(*libcommon_signal(int, void (*)(int)))(int);
+#define signal(i, i_p)	libcommon_signal((i), (i_p)))
+
 #endif	/* __FreeBSD__ || __dietlibc__ || __NetBSD__ || __OpenBSD__ ||
 	__DragonFly__ || __APPLE__ || LIBCOMMON_SIGSET */

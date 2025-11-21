@@ -27,8 +27,15 @@
 #include <signal.h>
 #include "sigset.h"
 
+#undef sighold
 int
 sighold(int sig)
+{
+	return libcommon_sighold(sig);
+}
+
+int
+libcommon_sighold(int sig)
 {
 	sigset_t	set, oset;
 

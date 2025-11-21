@@ -27,8 +27,15 @@
 #include <signal.h>
 #include "sigset.h"
 
+#undef sigpause
 int
 sigpause(int sig)
+{
+	return libcommon_sigpause(sig);
+}
+
+int
+libcommon_sigpause(int sig)
 {
 	sigset_t	nset, oset;
 	int	ret;

@@ -27,7 +27,13 @@
 #include <signal.h>
 #include "sigset.h"
 
+#undef signal
 void (*signal(int sig, void (*func)(int)))(int)
+{
+	return libcommon_signal(sig, func);
+}
+
+void (*libcommon_signal(int sig, void (*func)(int)))(int)
 {
 	struct sigaction nact, oact;
 
